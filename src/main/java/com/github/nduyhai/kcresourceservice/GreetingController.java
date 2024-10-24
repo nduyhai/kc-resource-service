@@ -1,5 +1,6 @@
 package com.github.nduyhai.kcresourceservice;
 
+import com.github.nduyhai.kcresourceservice.log.Loggable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/greeting")
 public class GreetingController {
+
+  @Loggable
   @GetMapping
   public String greeting(Authentication authentication) {
     log.info("Found login user {}", authentication);
