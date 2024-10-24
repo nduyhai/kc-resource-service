@@ -3,11 +3,6 @@ server:
 spring:
   application:
     name: kc-resource-service
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: ${JWK_URI:http://localhost:8080/realms/business-banking/protocol/openid-connect/certs}
 
 management:
   endpoints:
@@ -25,3 +20,8 @@ management:
       enabled: true
     readinessstate:
       enabled: true
+
+oauth2:
+  issuers:
+    - "http://localhost:8080/realms/business-banking"
+    - "http://localhost:8080/realms/master"

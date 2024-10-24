@@ -2,11 +2,11 @@ package com.github.nduyhai.kcresourceservice;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
@@ -25,7 +25,12 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain jwtFilterChain(
-      HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+      HttpSecurity http, HandlerMappingIntrospector introspector, IssuerProperties issuerProperties)
+      throws Exception {
+
+    final JwtIssuerAuthenticationManagerResolver authenticationManagerResolver =
+        JwtIssuerAuthenticationManagerResolver.fromTrustedIssuers(issuerProperties.getIssuers());
+
     http.csrf(AbstractHttpConfigurer::disable)
         .headers(
             headers ->
@@ -52,7 +57,8 @@ public class SecurityConfig {
                     .permitAll()
                     .anyRequest()
                     .authenticated())
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+        .oauth2ResourceServer(
+            oauth2 -> oauth2.authenticationManagerResolver(authenticationManagerResolver));
 
     return http.build();
   }
