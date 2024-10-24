@@ -7,7 +7,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${JWK_URI:http://localhost:8080/realms/business-banking/protocol/openid-connect/certs}
+          issuer-uri: ${ISSUER_URI:http://localhost:8080/realms/business-banking}
 
 management:
   endpoints:
