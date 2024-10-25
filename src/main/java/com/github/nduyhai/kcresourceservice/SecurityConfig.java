@@ -1,5 +1,6 @@
 package com.github.nduyhai.kcresourceservice;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,8 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain jwtFilterChain(
-      HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+      HttpSecurity http, HandlerMappingIntrospector introspector, ObjectMapper objectMapper)
+      throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
         .headers(
             headers ->
@@ -55,7 +57,12 @@ public class SecurityConfig {
                     .permitAll()
                     .anyRequest()
                     .authenticated())
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+        .oauth2ResourceServer(
+            oauth2 ->
+                oauth2
+                    .jwt(Customizer.withDefaults())
+                    .authenticationEntryPoint(new OauthEntryPoint(objectMapper))
+                    .accessDeniedHandler(new OauthAccessDeniedHandler(objectMapper)));
 
     return http.build();
   }
